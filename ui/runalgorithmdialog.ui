@@ -96,7 +96,7 @@
       <item row="4" column="0">
        <widget class="QRadioButton" name="radioButtonEvalMINLP">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="text">
          <string>MINLP</string>
@@ -106,7 +106,7 @@
       <item row="3" column="0">
        <widget class="QRadioButton" name="radioButtonEvalMILP">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="text">
          <string>MILP</string>
@@ -198,7 +198,7 @@
       <item row="1" column="0">
        <widget class="QRadioButton" name="radioButtonParprodLimit">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="text">
          <string>Limit:</string>
@@ -208,7 +208,7 @@
       <item row="1" column="1">
        <widget class="QSpinBox" name="spinBoxParprod">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="maximum">
          <number>10000000</number>
@@ -221,7 +221,7 @@
       <item row="2" column="0">
        <widget class="QRadioButton" name="radioButtonParprodNoLimit">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="text">
          <string>No limit</string>
@@ -253,7 +253,7 @@
       <item row="1" column="0">
        <widget class="QCheckBox" name="checkBoxAccelRSG">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="text">
          <string>RSG</string>
@@ -263,7 +263,7 @@
       <item row="2" column="0">
        <widget class="QCheckBox" name="checkBoxAccelNeutralExtension">
         <property name="enabled">
-         <bool>true</bool>
+         <bool>false</bool>
         </property>
         <property name="text">
          <string>Neutral extension</string>
