@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AboutDialog</class>
+ <widget class="QDialog" name="AboutDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>589</width>
+    <height>429</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>About P-Graph Insight</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="4" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Based on the methodology introduced by the following works:&lt;/p&gt;&lt;p&gt;Friedler F, Tarján K, Huang YW, Fan LT (1992) Graph-theoretic approach to process synthesis: Axioms and theorems. Chem Eng Sci 47:1973–1988&lt;/p&gt;&lt;p&gt;Friedler F, Tarján K, Huang YW, Fan LT (1992) Combinatorial algorithms for process synthesis. Comput Chem Eng 16:Suppl. S313-S320&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Times','serif';&quot;&gt;Friedler F, Tarján K, Huang YW, Fan LT (1993) Graph-theoretic approach to process synthesis: Polynomial algorithm for maximal structure generation. Comput Chem Eng 17:929–942&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Times','serif';&quot;&gt;Friedler F, Varga JB, Fan LT (1995) Decision-mapping: A tool for consistent and complete decisions in process synthesis. Chem Eng Sci 50:1755–1768. https://doi.org/10.1016/0009-2509(95)00034-3&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-family:'Times','serif';&quot;&gt;Friedler F, Varga JB, Fehér E, et al (1996) Combinatorially Accerelated Branch-and-Bound Method for Solving the MIP Model of Process Network Synthesis. In: Floudas C.A., Pardalos P.M. (eds) Nonconvex Optimization and its Applications. Kluwer Academic Publishers, Norwell, MA, pp 609–626&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="styleSheet">
+      <string notr="true">font: 12pt &quot;MS Shell Dlg 2&quot;;</string>
+     </property>
+     <property name="text">
+      <string>P-Graph Insight</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Developed by Ákos Orosz</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>AboutDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>AboutDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
