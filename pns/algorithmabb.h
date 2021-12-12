@@ -28,8 +28,6 @@ public:
 	std::list<StepOfAlgorithm> mSteps;
 
 	// other options
-	OperatingUnitSet mOnlyConsiderTheseUnits;
-	OperatingUnitSet mExcludeTheseUnits;
 	unsigned int mMaxSolutionCount;
 	EvaluationType mEvaluation;
 
@@ -50,8 +48,6 @@ public:
 public:
 	AlgorithmABB(const PnsProblem &problem, unsigned int maxSolutions, EvaluationType evaluation);
 	void run() override;
-	void onlyConsiderTheseUnits(const OperatingUnitSet &units);
-	void excludeTheseUnits(const OperatingUnitSet &units);
 
 	const std::list<ABBSolution> &getSolutionStructures() const;
 	const std::list<StepOfAlgorithm> &getSteps() const;

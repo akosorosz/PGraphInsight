@@ -29,10 +29,16 @@ class AlgorithmBase
 protected:
 	const PnsProblem &mProblem;
 	bool mSaveSteps=true;
+
+	// other options
+	OperatingUnitSet mOnlyConsiderTheseUnits;
+	OperatingUnitSet mExcludeTheseUnits;
 public:
 	AlgorithmBase(const PnsProblem &problem);
 	virtual void run() = 0;
 	void saveSteps(bool save);
+	void onlyConsiderTheseUnits(const OperatingUnitSet &units);
+	void excludeTheseUnits(const OperatingUnitSet &units);
 };
 
 } // namespace PnsTools

@@ -121,7 +121,6 @@ double AlgorithmABB::getSumOfIncludedWeights(const OperatingUnitSet &includedUni
 
 AlgorithmABB::AlgorithmABB(const PnsProblem &problem, unsigned int maxSolutions, EvaluationType evaluation):
 	AlgorithmBase(problem),
-	mOnlyConsiderTheseUnits(problem.operatingUnits()),
 	mMaxSolutionCount(maxSolutions),
 	mEvaluation(evaluation)
 {
@@ -158,16 +157,6 @@ void AlgorithmABB::run()
 	}
 
 	abbRecursive(problem, problem.products(), MaterialSet(), {}, OperatingUnitSet(), OperatingUnitSet(), parentStepId);
-}
-
-void AlgorithmABB::onlyConsiderTheseUnits(const OperatingUnitSet &units)
-{
-	mOnlyConsiderTheseUnits=units;
-}
-
-void AlgorithmABB::excludeTheseUnits(const OperatingUnitSet &units)
-{
-	mExcludeTheseUnits=units;
 }
 
 const std::list<AlgorithmABB::ABBSolution> &AlgorithmABB::getSolutionStructures() const

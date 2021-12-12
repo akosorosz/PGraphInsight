@@ -12,10 +12,6 @@ class AlgorithmSSG : public AlgorithmBase
 	std::list<std::pair<OperatingUnitSet,MaterialSet>> mSolutionStructures;
 	std::list<StepOfAlgorithm> mSteps;
 
-	// other options
-	OperatingUnitSet mOnlyConsiderTheseUnits;
-	OperatingUnitSet mExcludeTheseUnits;
-
 	int mStepId;
 
 	// last 3 parameters are only used for displaying the steps
@@ -24,8 +20,6 @@ class AlgorithmSSG : public AlgorithmBase
 public:
 	AlgorithmSSG(const PnsProblem &problem);
 	void run() override;
-	void onlyConsiderTheseUnits(const OperatingUnitSet &units);
-	void excludeTheseUnits(const OperatingUnitSet &units);
 
 	const std::list<std::pair<OperatingUnitSet,MaterialSet>> &getSolutionStructures() const;
 	const std::list<StepOfAlgorithm> &getSteps() const;

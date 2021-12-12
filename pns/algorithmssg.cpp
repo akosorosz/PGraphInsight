@@ -58,8 +58,7 @@ void AlgorithmSSG::ssgRecursive(const ReducedPnsProblemView &problem, const Mate
 }
 
 AlgorithmSSG::AlgorithmSSG(const PnsProblem &problem):
-	AlgorithmBase(problem),
-	mOnlyConsiderTheseUnits(problem.operatingUnits())
+	AlgorithmBase(problem)
 {
 }
 
@@ -90,16 +89,6 @@ void AlgorithmSSG::run()
 	}
 
 	ssgRecursive(problem, problem.products(), MaterialSet(), {}, OperatingUnitSet(), OperatingUnitSet(), parentStepId);
-}
-
-void AlgorithmSSG::onlyConsiderTheseUnits(const OperatingUnitSet &units)
-{
-	mOnlyConsiderTheseUnits=units;
-}
-
-void AlgorithmSSG::excludeTheseUnits(const OperatingUnitSet &units)
-{
-	mExcludeTheseUnits=units;
 }
 
 const std::list<std::pair<OperatingUnitSet, MaterialSet> > &AlgorithmSSG::getSolutionStructures() const

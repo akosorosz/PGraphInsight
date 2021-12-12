@@ -4,8 +4,7 @@
 namespace PnsTools {
 
 AlgorithmMSG::AlgorithmMSG(const PnsProblem &problem):
-	AlgorithmBase(problem),
-	mOnlyConsiderTheseUnits(problem.operatingUnits())
+	AlgorithmBase(problem)
 {
 }
 
@@ -82,16 +81,6 @@ void AlgorithmMSG::run()
 	parentStepId=stepId;
 	mUnitsInMaximalStructure=includedUnits;
 	mMaterialsInMaximalStructure=problemComp.materialsConsumedByAnyOf(includedUnits) + problemComp.materialsProducedByAnyOf(includedUnits);
-}
-
-void AlgorithmMSG::onlyConsiderTheseUnits(const OperatingUnitSet &units)
-{
-	mOnlyConsiderTheseUnits=units;
-}
-
-void AlgorithmMSG::excludeTheseUnits(const OperatingUnitSet &units)
-{
-	mExcludeTheseUnits=units;
 }
 
 const OperatingUnitSet &AlgorithmMSG::getUnitsOfMaximalStructure() const

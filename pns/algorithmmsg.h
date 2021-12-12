@@ -14,14 +14,9 @@ class AlgorithmMSG : public AlgorithmBase
 	MaterialSet mMaterialsInMaximalStructure;
 	std::list<StepOfAlgorithm> mSteps;
 
-	// other options
-	OperatingUnitSet mOnlyConsiderTheseUnits;
-	OperatingUnitSet mExcludeTheseUnits;
 public:
 	AlgorithmMSG(const PnsProblem &problem);
 	void run() override;
-	void onlyConsiderTheseUnits(const OperatingUnitSet &units);
-	void excludeTheseUnits(const OperatingUnitSet &units);
 
 	const OperatingUnitSet &getUnitsOfMaximalStructure() const;
 	MaterialSet getMaterialsOfMaximalStructure() const;
