@@ -105,7 +105,7 @@ public:
 	MaterialSet alreadyProducedInDecisionMapping(const DecisionMapping &decisionMap) const;
 	OperatingUnitSet includedUnitsInDecisionMapping(const DecisionMapping &decisionMap) const;
 	OperatingUnitSet excludedUnitsInDecisionMapping(const DecisionMapping &decisionMap) const;
-	DecisionMapping neutralExtension(const DecisionMapping &decisionMap) const;
+	DecisionMapping neutralExtension(const DecisionMapping &decisionMap, unsigned int maxParallelProduction=10000000) const;
 };
 
 } // namespace PnsTools

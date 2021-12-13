@@ -198,7 +198,7 @@
       <item row="1" column="0">
        <widget class="QRadioButton" name="radioButtonParprodLimit">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="text">
          <string>Limit:</string>
@@ -208,7 +208,7 @@
       <item row="1" column="1">
        <widget class="QSpinBox" name="spinBoxParprod">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="maximum">
          <number>10000000</number>
@@ -221,7 +221,7 @@
       <item row="2" column="0">
        <widget class="QRadioButton" name="radioButtonParprodNoLimit">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="text">
          <string>No limit</string>

@@ -25,7 +25,7 @@ void AlgorithmSSG::ssgRecursive(const ReducedPnsProblemView &problem, const Mate
 
 	if (mUseNeutralExtension)
 	{
-		decisionMap=problem.neutralExtension(pDecisionMap);
+		decisionMap=problem.neutralExtension(pDecisionMap, mMaxParallelProduction);
 		if (decisionMap.size()==pDecisionMap.size())
 		{
 			subproblemCommentString.append("\nNeutral extension: No effect");
@@ -63,6 +63,7 @@ void AlgorithmSSG::ssgRecursive(const ReducedPnsProblemView &problem, const Mate
 	for (OperatingUnitSet decision : decisionOptions)
 	{
 		if (decision.empty()) continue;
+		if (decision.size()>mMaxParallelProduction) continue;
 		// consistency check
 		OperatingUnitSet decisionInverse = canProduceSelectedMaterial - decision;
 		bool isConsistent=std::all_of(decisionMap.begin(), decisionMap.end(), [&decision,&decisionInverse,&problem](const std::pair<Material, OperatingUnitSet> &dec){
@@ -82,9 +83,10 @@ void AlgorithmSSG::ssgRecursive(const ReducedPnsProblemView &problem, const Mate
 	}
 }
 
-AlgorithmSSG::AlgorithmSSG(const PnsProblem &problem, unsigned int accelerations):
+AlgorithmSSG::AlgorithmSSG(const PnsProblem &problem, unsigned int accelerations, unsigned int maxParallelProduction):
 	AlgorithmBase(problem),
-	mUseNeutralExtension(accelerations&ACCEL_NEUTRAL_EXTENSION)
+	mUseNeutralExtension(accelerations&ACCEL_NEUTRAL_EXTENSION),
+	mMaxParallelProduction(maxParallelProduction)
 {
 }
 

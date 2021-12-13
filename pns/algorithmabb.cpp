@@ -33,7 +33,7 @@ void AlgorithmABB::abbRecursive(const PnsProblem &problem, const MaterialSet &pT
 
 	if (mUseNeutralExtension)
 	{
-		decisionMap=problem.neutralExtension(pDecisionMap);
+		decisionMap=problem.neutralExtension(pDecisionMap, mMaxParallelProduction);
 		if (decisionMap.size()==pDecisionMap.size())
 		{
 			subproblemCommentString.append("\nNeutral extension: No effect");
@@ -108,6 +108,7 @@ void AlgorithmABB::abbRecursive(const PnsProblem &problem, const MaterialSet &pT
 	for (OperatingUnitSet decision : decisionOptions)
 	{
 		if (decision.empty()) continue;
+		if (decision.size()>mMaxParallelProduction) continue;
 		// consistency check
 		OperatingUnitSet decisionInverse = canProduceSelectedMaterial - decision;
 		bool isConsistent=std::all_of(decisionMap.begin(), decisionMap.end(), [&decision,&decisionInverse,&problem](const std::pair<const Material, OperatingUnitSet> &dec){
@@ -143,11 +144,12 @@ double AlgorithmABB::getSumOfIncludedWeights(const OperatingUnitSet &includedUni
 	return weightSum;
 }
 
-AlgorithmABB::AlgorithmABB(const PnsProblem &problem, unsigned int maxSolutions, EvaluationType evaluation, unsigned int accelerations):
+AlgorithmABB::AlgorithmABB(const PnsProblem &problem, unsigned int maxSolutions, EvaluationType evaluation, unsigned int accelerations, unsigned int maxParallelProduction):
 	AlgorithmBase(problem),
 	mMaxSolutionCount(maxSolutions),
 	mEvaluation(evaluation),
-	mUseNeutralExtension(accelerations&ACCEL_NEUTRAL_EXTENSION)
+	mUseNeutralExtension(accelerations&ACCEL_NEUTRAL_EXTENSION),
+	mMaxParallelProduction(maxParallelProduction)
 {
 	if (mMaxSolutionCount<1) mMaxSolutionCount=1;
 }

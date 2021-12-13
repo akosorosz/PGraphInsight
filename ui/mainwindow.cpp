@@ -234,7 +234,7 @@ void MainWindow::on_actionRunAlgorithm_triggered()
 				{
 					if (accel==RunAlgorithmDialog::ACCEL_NEUTRAL_EXTENSION) accelerations|=PnsTools::AlgorithmBase::ACCEL_NEUTRAL_EXTENSION;
 				}
-				PnsTools::AlgorithmSSG ssg(pnsProblem, accelerations);
+				PnsTools::AlgorithmSSG ssg(pnsProblem, accelerations, runParameters.parallelProductionLimit);
 				ssg.run();
 				const auto &solutionStructures=ssg.getSolutionStructures();
 				const std::list<PnsTools::StepOfAlgorithm> &msgSteps=ssg.getSteps();
@@ -320,7 +320,7 @@ void MainWindow::on_actionRunAlgorithm_triggered()
 					if (accel==RunAlgorithmDialog::ACCEL_RSG) accelerations|=PnsTools::AlgorithmBase::ACCEL_RSG;
 					else if (accel==RunAlgorithmDialog::ACCEL_NEUTRAL_EXTENSION) accelerations|=PnsTools::AlgorithmBase::ACCEL_NEUTRAL_EXTENSION;
 				}
-				PnsTools::AlgorithmABB abb(pnsProblem, runParameters.numberOfSolutions, PnsTools::AlgorithmBase::EvaluationType(runParameters.evaluation), accelerations);
+				PnsTools::AlgorithmABB abb(pnsProblem, runParameters.numberOfSolutions, PnsTools::AlgorithmBase::EvaluationType(runParameters.evaluation), accelerations, runParameters.parallelProductionLimit);
 				abb.run();
 				const auto &solutionStructures=abb.getSolutionStructures();
 				const std::list<PnsTools::StepOfAlgorithm> &msgSteps=abb.getSteps();

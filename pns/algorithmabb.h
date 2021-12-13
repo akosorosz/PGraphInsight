@@ -24,6 +24,7 @@ public:
 	unsigned int mMaxSolutionCount;
 	EvaluationType mEvaluation;
 	bool mUseNeutralExtension;
+	unsigned int mMaxParallelProduction;
 
 	int mTotalSolCount;
 	int mStepId;
@@ -40,7 +41,7 @@ public:
 	double getSumOfIncludedWeights(const OperatingUnitSet &includedUnits);
 
 public:
-	AlgorithmABB(const PnsProblem &problem, unsigned int maxSolutions, EvaluationType evaluation, unsigned int accelerations);
+	AlgorithmABB(const PnsProblem &problem, unsigned int maxSolutions, EvaluationType evaluation, unsigned int accelerations=0, unsigned int maxParallelProduction=10000000);
 	void run() override;
 
 	const std::list<ABBSolution> &getSolutionStructures() const;

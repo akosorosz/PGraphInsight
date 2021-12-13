@@ -14,6 +14,7 @@ class AlgorithmSSG : public AlgorithmBase
 
 	// other options
 	bool mUseNeutralExtension;
+	unsigned int mMaxParallelProduction;
 
 	int mStepId;
 
@@ -21,7 +22,7 @@ class AlgorithmSSG : public AlgorithmBase
 	void ssgRecursive(const ReducedPnsProblemView &problem, const MaterialSet &pToBeProduced, const MaterialSet &pAlreadyProduced, const DecisionMapping &pDecisionMap, int parentStepId);
 
 public:
-	AlgorithmSSG(const PnsProblem &problem, unsigned int accelerations);
+	AlgorithmSSG(const PnsProblem &problem, unsigned int accelerations=0, unsigned int maxParallelProduction=10000000);
 	void run() override;
 
 	const std::list<std::pair<OperatingUnitSet,MaterialSet>> &getSolutionStructures() const;

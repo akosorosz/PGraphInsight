@@ -62,7 +62,7 @@ OperatingUnitSet PnsProblem::excludedUnitsInDecisionMapping(const DecisionMappin
 	return excludedUnits;
 }
 
-DecisionMapping PnsProblem::neutralExtension(const DecisionMapping &decisionMap) const
+DecisionMapping PnsProblem::neutralExtension(const DecisionMapping &decisionMap, unsigned int maxParallelProduction) const
 {
 	DecisionMapping extended=decisionMap;
 	bool newRound=true;
@@ -72,17 +72,20 @@ DecisionMapping PnsProblem::neutralExtension(const DecisionMapping &decisionMap)
 	OperatingUnitSet excludedUnits=excludedUnitsInDecisionMapping(extended);
 	while (newRound)
 	{
-		auto materialIt=std::find_if(toBeProduced.begin(), toBeProduced.end(), [&includedUnits,&excludedUnits,this](Material m){
+		auto materialIt=std::find_if(toBeProduced.begin(), toBeProduced.end(), [&includedUnits,&excludedUnits,&maxParallelProduction,this](Material m){
 			OperatingUnitSet producingM=this->unitsProducing(m);
 			OperatingUnitSet canBeAdded=producingM-excludedUnits;
 			OperatingUnitSet alreadyAdded=producingM&includedUnits;
-			return canBeAdded.size()==0 || (alreadyAdded.size()==0 && canBeAdded.size()==1);
+			return canBeAdded.size()==0 || (alreadyAdded.size()==0 && canBeAdded.size()==1) || alreadyAdded.size()==maxParallelProduction;
 		});
 		if (materialIt==toBeProduced.end()) newRound=false;
 		else
 		{
 			newRound=true;
-			extended.insert({*materialIt,this->unitsProducing(*materialIt)-excludedUnits});
+			if ((this->unitsProducing(*materialIt)&includedUnits).size()==maxParallelProduction)
+				extended.insert({*materialIt,this->unitsProducing(*materialIt)&includedUnits});
+			else
+				extended.insert({*materialIt,this->unitsProducing(*materialIt)-excludedUnits});
 			alreadyProduced+=*materialIt;
 			toBeProduced=toBeProducedInDecisionMapping(extended);
 			includedUnits+=this->unitsProducing(*materialIt)-excludedUnits;
