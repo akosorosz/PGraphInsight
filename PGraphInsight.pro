@@ -17,6 +17,7 @@ SOURCES += \
     pns/algorithmbase.cpp \
     pns/algorithmmsg.cpp \
     pns/algorithmssg.cpp \
+    pns/originalpnsproblem.cpp \
     pns/pnsproblem.cpp \
     pns/reducedpnsproblemview.cpp \
     ui/aboutdialog.cpp \
@@ -38,6 +39,7 @@ HEADERS += \
     pns/algorithmmsg.h \
     pns/algorithmssg.h \
     pns/extendedset.h \
+    pns/originalpnsproblem.h \
     pns/pnsproblem.h \
     pns/powerset.h \
     pns/reducedpnsproblemview.h \

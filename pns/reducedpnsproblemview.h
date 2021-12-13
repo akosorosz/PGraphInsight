@@ -5,26 +5,26 @@
 
 namespace PnsTools {
 
-class ReducedPnsProblemView
+class ReducedPnsProblemView : public PnsProblem
 {
 	const PnsProblem &mProblem;
 	OperatingUnitSet mBaseUnitSet;
 public:
 	ReducedPnsProblemView(const PnsProblem &problem);
-	bool isEmpty() const;
-	const MaterialSet &materials() const;
-	const MaterialSet &rawMaterials() const;
-	const MaterialSet &products() const;
-	const MaterialSet &intermediates() const;
-	const OperatingUnitSet &operatingUnits() const;
-	OperatingUnitSet unitsProducing(const Material &material) const;
-	OperatingUnitSet unitsConsuming(const Material &material) const;
-	MaterialSet materialsProducedBy(const OperatingUnit &unit) const;
-	MaterialSet materialsConsumedBy(const OperatingUnit &unit) const;
-	OperatingUnitSet unitsProducingAnyOf(const MaterialSet &materials) const;
-	OperatingUnitSet unitsConsumingAnyOf(const MaterialSet &materials) const;
-	MaterialSet materialsProducedByAnyOf(const OperatingUnitSet &units) const;
-	MaterialSet materialsConsumedByAnyOf(const OperatingUnitSet &units) const;
+	bool isEmpty() const override;
+	const MaterialSet &materials() const override;
+	const MaterialSet &rawMaterials() const override;
+	const MaterialSet &products() const override;
+	const MaterialSet &intermediates() const override;
+	const OperatingUnitSet &operatingUnits() const override;
+	OperatingUnitSet unitsProducing(const Material &material) const override;
+	OperatingUnitSet unitsConsuming(const Material &material) const override;
+	MaterialSet materialsProducedBy(const OperatingUnit &unit) const override;
+	MaterialSet materialsConsumedBy(const OperatingUnit &unit) const override;
+	OperatingUnitSet unitsProducingAnyOf(const MaterialSet &materials) const override;
+	OperatingUnitSet unitsConsumingAnyOf(const MaterialSet &materials) const override;
+	MaterialSet materialsProducedByAnyOf(const OperatingUnitSet &units) const override;
+	MaterialSet materialsConsumedByAnyOf(const OperatingUnitSet &units) const override;
 
 	void setBaseUnitSet(const OperatingUnitSet &units);
 };

@@ -18,7 +18,7 @@
 #include "runresultviewer.h"
 #include "licensedialog.h"
 #include "aboutdialog.h"
-#include "../pns/pnsproblem.h"
+#include "../pns/originalpnsproblem.h"
 #include "../extendedwidgets/extendedsqlquerymodel.h"
 #include "../extendedwidgets/extendedsqltablemodel.h"
 
@@ -88,7 +88,7 @@ private:
 	QPair<QString,int> currentSelectedOperatingUnit={QString(),-1};
 	QMap<QString,int> materialNameToId;
 
-	PnsTools::PnsProblem pnsProblem;
+	PnsTools::OriginalPnsProblem pnsProblem;
 
 	RunAlgorithmDialog *algorithmDialog;
 

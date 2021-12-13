@@ -82,91 +82,23 @@ using DecisionMapping = std::map<Material, OperatingUnitSet, materialCompare>;
 std::string getMaterialNamesString(const MaterialSet &materials);
 std::string getUnitNamesString(const OperatingUnitSet &units);
 
-class MaterialIdExistsException : public std::exception{
-	std::string errorStr;
-public:
-	MaterialIdExistsException(int id):
-		errorStr("Material id "+std::to_string(id)+" already exists in the PNS problem")
-	{}
-	const char *what() const noexcept override{
-		return errorStr.c_str();
-	}
-};
-
-class OperatingUnitIdExistsException : public std::exception{
-	std::string errorStr;
-public:
-	OperatingUnitIdExistsException(int id):
-		errorStr("Operating unit id "+std::to_string(id)+" already exists in the PNS problem")
-	{}
-	const char *what() const noexcept override{
-		return errorStr.c_str();
-	}
-};
-
-class MaterialIdDoesNotExistException : public std::exception{
-	std::string errorStr;
-public:
-	MaterialIdDoesNotExistException(int id):
-		errorStr("Material id "+std::to_string(id)+" does not exist in the PNS problem")
-	{}
-	const char *what() const noexcept override{
-		return errorStr.c_str();
-	}
-};
-
-class OperatingUnitIdDoesNotExistException : public std::exception{
-	std::string errorStr;
-public:
-	OperatingUnitIdDoesNotExistException(int id):
-		errorStr("Operating unit id "+std::to_string(id)+" does not exist in the PNS problem")
-	{}
-	const char *what() const noexcept override{
-		return errorStr.c_str();
-	}
-};
-
-
 class PnsProblem
 {
-	bool mIsEmpty=true;
-	std::list<MaterialData> mMaterialDataList;
-	std::list<OperatingUnitData> mOperatingUnitDataList;
-
-	MaterialSet mMaterials, mRawMaterials, mProducts, mIntermediates;
-	OperatingUnitSet mOperatingUnits;
-
-	std::map<Material,OperatingUnitSet> mUnitsThatProduceMaterial;
-	std::map<Material,OperatingUnitSet> mUnitsThatConsumeMaterial;
-	std::map<OperatingUnit,MaterialSet> mMaterialsProducedByUnit;
-	std::map<OperatingUnit,MaterialSet> mMaterialsConsumedByUnit;
-
-	std::map<int,Material> mMaterialIdToPointer;
-	std::map<int,OperatingUnit> mOperatingUnitIdToPointer;
-	std::map<OperatingUnit,std::map<Material,double>> mInputFlowRates;
-	std::map<OperatingUnit,std::map<Material,double>> mOutputFlowRates;
 public:
-	void clear();
-	void addMaterialData(const MaterialData &newMaterialData);
-	void addOperatingUnitData(const OperatingUnitData &newOperatingUnitData);
-	void addUnitMaterialConnection(int unitId, int materialId, bool isInput, double flowRate);
-
-	bool isEmpty() const;
-	const MaterialSet &materials() const;
-	const MaterialSet &rawMaterials() const;
-	const MaterialSet &products() const;
-	const MaterialSet &intermediates() const;
-	const OperatingUnitSet &operatingUnits() const;
-	OperatingUnitSet unitsProducing(const Material &material) const;
-	OperatingUnitSet unitsConsuming(const Material &material) const;
-	MaterialSet materialsProducedBy(const OperatingUnit &unit) const;
-	MaterialSet materialsConsumedBy(const OperatingUnit &unit) const;
-	OperatingUnitSet unitsProducingAnyOf(const MaterialSet &materials) const;
-	OperatingUnitSet unitsConsumingAnyOf(const MaterialSet &materials) const;
-	MaterialSet materialsProducedByAnyOf(const OperatingUnitSet &units) const;
-	MaterialSet materialsConsumedByAnyOf(const OperatingUnitSet &units) const;
-
-	std::string dumpData() const;
+	virtual bool isEmpty() const =0;
+	virtual const MaterialSet &materials() const =0;
+	virtual const MaterialSet &rawMaterials() const =0;
+	virtual const MaterialSet &products() const =0;
+	virtual const MaterialSet &intermediates() const =0;
+	virtual const OperatingUnitSet &operatingUnits() const =0;
+	virtual OperatingUnitSet unitsProducing(const Material &material) const =0;
+	virtual OperatingUnitSet unitsConsuming(const Material &material) const =0;
+	virtual MaterialSet materialsProducedBy(const OperatingUnit &unit) const =0;
+	virtual MaterialSet materialsConsumedBy(const OperatingUnit &unit) const =0;
+	virtual OperatingUnitSet unitsProducingAnyOf(const MaterialSet &materials) const =0;
+	virtual OperatingUnitSet unitsConsumingAnyOf(const MaterialSet &materials) const =0;
+	virtual MaterialSet materialsProducedByAnyOf(const OperatingUnitSet &units) const =0;
+	virtual MaterialSet materialsConsumedByAnyOf(const OperatingUnitSet &units) const =0;
 };
 
 } // namespace PnsTools
