@@ -12,8 +12,46 @@ void AlgorithmABB::insertSolutionSortedByObjectiveValue(const ABBSolution &solut
 	mSolutionStructures.insert(it, solution);
 }
 
-void AlgorithmABB::abbRecursive(const ReducedPnsProblemView &problem, const MaterialSet &toBeProduced, const MaterialSet &alreadyProduced, const DecisionMapping &decisionMap, const OperatingUnitSet &includedUnits, const OperatingUnitSet &excludedUnits, int parentStepId)
+void AlgorithmABB::abbRecursive(const PnsProblem &problem, const MaterialSet &pToBeProduced, const MaterialSet &pAlreadyProduced, const DecisionMapping &pDecisionMap, int parentStepId)
 {
+	MaterialSet toBeProduced=pToBeProduced;
+	MaterialSet alreadyProduced=pAlreadyProduced;
+	DecisionMapping decisionMap=pDecisionMap;
+	OperatingUnitSet includedUnits=problem.includedUnitsInDecisionMapping(decisionMap);
+	OperatingUnitSet excludedUnits=problem.excludedUnitsInDecisionMapping(decisionMap);
+	std::string decisionMapString("\nCurrent decision mapping:");
+	if (!decisionMap.empty())
+	{
+		for (const auto &dec : decisionMap)
+			decisionMapString += "\n  "+dec.first->name+": "+getUnitNamesString(dec.second);
+	}
+	else
+	{
+		decisionMapString += " empty";
+	}
+	std::string subproblemCommentString("Materials to be produced: " + getMaterialNamesString(toBeProduced) + "\nMaterials already decided: " + getMaterialNamesString(alreadyProduced) + "\nIncluded units: " + getUnitNamesString(includedUnits) + "\nExcluded units: " + getUnitNamesString(excludedUnits) + decisionMapString);
+
+	if (mUseNeutralExtension)
+	{
+		decisionMap=problem.neutralExtension(pDecisionMap);
+		if (decisionMap.size()==pDecisionMap.size())
+		{
+			subproblemCommentString.append("\nNeutral extension: No effect");
+		}
+		else
+		{
+			toBeProduced=problem.toBeProducedInDecisionMapping(decisionMap);
+			alreadyProduced=problem.alreadyProducedInDecisionMapping(decisionMap);
+			includedUnits=problem.includedUnitsInDecisionMapping(decisionMap);
+			excludedUnits=problem.excludedUnitsInDecisionMapping(decisionMap);
+			std::string newDecisionMapString("\n    Decision mapping:");
+			for (const auto &dec : decisionMap)
+				newDecisionMapString += "\n      "+dec.first->name+": "+getUnitNamesString(dec.second);
+
+			subproblemCommentString.append("\nNeutral extension: extended with " + std::to_string(decisionMap.size()-pDecisionMap.size()) + " decisions. New data:" + "\n    Materials to be produced: " + getMaterialNamesString(toBeProduced) + "\n    Materials already decided: " + getMaterialNamesString(alreadyProduced) + "\n    Included units: " + getUnitNamesString(includedUnits) + "\n    Excluded units: " + getUnitNamesString(excludedUnits) + newDecisionMapString);
+		}
+	}
+
 	double localBound=getBound(problem, includedUnits, excludedUnits);
 	if (toBeProduced.empty())
 	{
@@ -39,42 +77,30 @@ void AlgorithmABB::abbRecursive(const ReducedPnsProblemView &problem, const Mate
 
 			if (localBound<mCurrentBest)
 			{
-				mSteps.push_back(StepOfAlgorithm(++mStepId, parentStepId, includedUnits, excludedUnits, localBound, "Materials to be produced: " + getMaterialNamesString(toBeProduced) + "\nMaterials already decided: " + getMaterialNamesString(alreadyProduced) + "\nIncluded units: " + getUnitNamesString(includedUnits) + "\nExcluded units: " + getUnitNamesString(excludedUnits) + "\nSolution value: " + std::to_string(localBound) + "\nSolution structure #" + std::to_string(solId) + " found\nUnits: " + getUnitNamesString(includedUnits) + "\nThis is the new best solution" + additionalInfo));
+				mSteps.push_back(StepOfAlgorithm(++mStepId, parentStepId, includedUnits, excludedUnits, localBound, subproblemCommentString + "\nSolution value: " + std::to_string(localBound) + "\nSolution structure #" + std::to_string(solId) + " found\nUnits: " + getUnitNamesString(includedUnits) + "\nThis is the new best solution" + additionalInfo));
 				mCurrentBest=localBound;
 			}
 			else
 			{
-				mSteps.push_back(StepOfAlgorithm(++mStepId, parentStepId, includedUnits, excludedUnits, localBound, "Materials to be produced: " + getMaterialNamesString(toBeProduced) + "\nMaterials already decided: " + getMaterialNamesString(alreadyProduced) + "\nIncluded units: " + getUnitNamesString(includedUnits) + "\nExcluded units: " + getUnitNamesString(excludedUnits) + "\nSolution value: " + std::to_string(localBound) + "\nSolution structure #" + std::to_string(solId) + " found\nUnits: " + getUnitNamesString(includedUnits) + additionalInfo));
+				mSteps.push_back(StepOfAlgorithm(++mStepId, parentStepId, includedUnits, excludedUnits, localBound, subproblemCommentString + "\nSolution value: " + std::to_string(localBound) + "\nSolution structure #" + std::to_string(solId) + " found\nUnits: " + getUnitNamesString(includedUnits) + additionalInfo));
 			}
 		}
 		else
 		{
-			mSteps.push_back(StepOfAlgorithm(++mStepId, parentStepId, includedUnits, excludedUnits, localBound, "Materials to be produced: " + getMaterialNamesString(toBeProduced) + "\nMaterials already decided: " + getMaterialNamesString(alreadyProduced) + "\nIncluded units: " + getUnitNamesString(includedUnits) + "\nExcluded units: " + getUnitNamesString(excludedUnits) + "\nSolution value: " + std::to_string(localBound) + "\nThis solution is fathomed, as it is worse than the bound."));
+			mSteps.push_back(StepOfAlgorithm(++mStepId, parentStepId, includedUnits, excludedUnits, localBound, subproblemCommentString + "\nSolution value: " + std::to_string(localBound) + "\nThis solution is fathomed, as it is worse than the bound."));
 		}
 		return;
 	}
 
 	if (localBound>mGlobalBound || (localBound>=mGlobalBound && mSolutionStructures.size()>=mMaxSolutionCount))
 	{
-		mSteps.push_back(StepOfAlgorithm(++mStepId, parentStepId, includedUnits, excludedUnits, localBound, "Materials to be produced: " + getMaterialNamesString(toBeProduced) + "\nMaterials already decided: " + getMaterialNamesString(alreadyProduced) + "\nIncluded units: " + getUnitNamesString(includedUnits) + "\nExcluded units: " + getUnitNamesString(excludedUnits) + "\nLocal bound: " + std::to_string(localBound) + "\nThis subproblem is fathomed, as it is worse than the bound."));
+		mSteps.push_back(StepOfAlgorithm(++mStepId, parentStepId, includedUnits, excludedUnits, localBound, subproblemCommentString + "\nLocal bound: " + std::to_string(localBound) + "\nThis subproblem is fathomed, as it is worse than the bound."));
 		return;
 	}
 
 	Material selectedMaterial=toBeProduced.front();
 
-	std::string decisionMapString("\nCurrent decision mapping:");
-	if (!decisionMap.empty())
-	{
-		for (const auto &dec : decisionMap)
-			decisionMapString += "\n  "+dec.first->name+": "+getUnitNamesString(dec.second);
-	}
-	else
-	{
-		decisionMapString += " empty";
-	}
-
-
-	mSteps.push_back(StepOfAlgorithm(++mStepId, parentStepId, includedUnits, excludedUnits, localBound, "Materials to be produced: " + getMaterialNamesString(toBeProduced) + "\nMaterials already decided: " + getMaterialNamesString(alreadyProduced) + "\nIncluded units: " + getUnitNamesString(includedUnits) + "\nExcluded units: " + getUnitNamesString(excludedUnits) + "\nLocal bound: " + std::to_string(localBound) + decisionMapString + "\nSelected material for decision: " + selectedMaterial->name));
+	mSteps.push_back(StepOfAlgorithm(++mStepId, parentStepId, includedUnits, excludedUnits, localBound, subproblemCommentString + "\nLocal bound: " + std::to_string(localBound) + "\nSelected material for decision: " + selectedMaterial->name));
 	int mystepId=mStepId;
 
 	OperatingUnitSet canProduceSelectedMaterial = problem.unitsProducing(selectedMaterial);
@@ -84,7 +110,7 @@ void AlgorithmABB::abbRecursive(const ReducedPnsProblemView &problem, const Mate
 		if (decision.empty()) continue;
 		// consistency check
 		OperatingUnitSet decisionInverse = canProduceSelectedMaterial - decision;
-		bool isConsistent=std::all_of(decisionMap.begin(), decisionMap.end(), [&decision,&decisionInverse,&problem](const std::pair<Material, OperatingUnitSet> &dec){
+		bool isConsistent=std::all_of(decisionMap.begin(), decisionMap.end(), [&decision,&decisionInverse,&problem](const std::pair<const Material, OperatingUnitSet> &dec){
 			return (decision & (problem.unitsProducing(dec.first)-dec.second)).empty() &&
 					(decisionInverse & dec.second).empty();
 		});
@@ -96,14 +122,12 @@ void AlgorithmABB::abbRecursive(const ReducedPnsProblemView &problem, const Mate
 						 (toBeProduced + problem.materialsConsumedByAnyOf(decision))-(problem.rawMaterials() + alreadyProduced + selectedMaterial),
 						 alreadyProduced + selectedMaterial,
 						 newDecisionMap,
-						 includedUnits + decision,
-						 excludedUnits + decisionInverse,
 						 mystepId);
 		}
 	}
 }
 
-double AlgorithmABB::getBound(const ReducedPnsProblemView &, const OperatingUnitSet &includedUnits, const OperatingUnitSet &)
+double AlgorithmABB::getBound(const PnsProblem &, const OperatingUnitSet &includedUnits, const OperatingUnitSet &)
 {
 	// For now this is fix bound on weight, and the bound is the sum of the included units
 	if (mEvaluation==EVAL_NONE) return 0.0;
@@ -119,10 +143,11 @@ double AlgorithmABB::getSumOfIncludedWeights(const OperatingUnitSet &includedUni
 	return weightSum;
 }
 
-AlgorithmABB::AlgorithmABB(const PnsProblem &problem, unsigned int maxSolutions, EvaluationType evaluation):
+AlgorithmABB::AlgorithmABB(const PnsProblem &problem, unsigned int maxSolutions, EvaluationType evaluation, unsigned int accelerations):
 	AlgorithmBase(problem),
 	mMaxSolutionCount(maxSolutions),
-	mEvaluation(evaluation)
+	mEvaluation(evaluation),
+	mUseNeutralExtension(accelerations&ACCEL_NEUTRAL_EXTENSION)
 {
 	if (mMaxSolutionCount<1) mMaxSolutionCount=1;
 }
@@ -156,7 +181,7 @@ void AlgorithmABB::run()
 		return;
 	}
 
-	abbRecursive(problem, problem.products(), MaterialSet(), {}, OperatingUnitSet(), OperatingUnitSet(), parentStepId);
+	abbRecursive(problem, problem.products(), MaterialSet(), {}, parentStepId);
 }
 
 const std::list<AlgorithmABB::ABBSolution> &AlgorithmABB::getSolutionStructures() const

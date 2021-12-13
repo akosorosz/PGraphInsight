@@ -12,13 +12,16 @@ class AlgorithmSSG : public AlgorithmBase
 	std::list<std::pair<OperatingUnitSet,MaterialSet>> mSolutionStructures;
 	std::list<StepOfAlgorithm> mSteps;
 
+	// other options
+	bool mUseNeutralExtension;
+
 	int mStepId;
 
 	// last 3 parameters are only used for displaying the steps
-	void ssgRecursive(const ReducedPnsProblemView &problem, const MaterialSet &toBeProduced, const MaterialSet &alreadyProduced, const DecisionMapping &decisionMap, const OperatingUnitSet &includedUnits, const OperatingUnitSet &excludedUnits, int parentStepId);
+	void ssgRecursive(const ReducedPnsProblemView &problem, const MaterialSet &pToBeProduced, const MaterialSet &pAlreadyProduced, const DecisionMapping &pDecisionMap, int parentStepId);
 
 public:
-	AlgorithmSSG(const PnsProblem &problem);
+	AlgorithmSSG(const PnsProblem &problem, unsigned int accelerations);
 	void run() override;
 
 	const std::list<std::pair<OperatingUnitSet,MaterialSet>> &getSolutionStructures() const;

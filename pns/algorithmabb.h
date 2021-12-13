@@ -16,13 +16,6 @@ public:
 		double objectiveValue;
 	};
 
-	enum EvaluationType{
-		EVAL_NONE,
-		EVAL_SUMWEIGHT,
-		EVAL_MILP,
-		EVAL_MINLP
-	};
-
 	// solution
 	std::list<ABBSolution> mSolutionStructures;
 	std::list<StepOfAlgorithm> mSteps;
@@ -30,6 +23,7 @@ public:
 	// other options
 	unsigned int mMaxSolutionCount;
 	EvaluationType mEvaluation;
+	bool mUseNeutralExtension;
 
 	int mTotalSolCount;
 	int mStepId;
@@ -39,14 +33,14 @@ public:
 	void insertSolutionSortedByObjectiveValue(const ABBSolution &solution);
 
 	// last 3 parameters are only used for displaying the steps
-	void abbRecursive(const ReducedPnsProblemView &problem, const MaterialSet &toBeProduced, const MaterialSet &alreadyProduced, const DecisionMapping &decisionMap, const OperatingUnitSet &includedUnits, const OperatingUnitSet &excludedUnits, int parentStepId);
-	double getBound(const ReducedPnsProblemView &problem, const OperatingUnitSet &includedUnits, const OperatingUnitSet &excludedUnits);
+	void abbRecursive(const PnsProblem &problem, const MaterialSet &pToBeProduced, const MaterialSet &pAlreadyProduced, const DecisionMapping &pDecisionMap, int parentStepId);
+	double getBound(const PnsProblem &problem, const OperatingUnitSet &includedUnits, const OperatingUnitSet &excludedUnits);
 
 	// Different bounding functions
 	double getSumOfIncludedWeights(const OperatingUnitSet &includedUnits);
 
 public:
-	AlgorithmABB(const PnsProblem &problem, unsigned int maxSolutions, EvaluationType evaluation);
+	AlgorithmABB(const PnsProblem &problem, unsigned int maxSolutions, EvaluationType evaluation, unsigned int accelerations);
 	void run() override;
 
 	const std::list<ABBSolution> &getSolutionStructures() const;

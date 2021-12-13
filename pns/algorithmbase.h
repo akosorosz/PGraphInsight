@@ -34,6 +34,18 @@ protected:
 	OperatingUnitSet mOnlyConsiderTheseUnits;
 	OperatingUnitSet mExcludeTheseUnits;
 public:
+	enum EvaluationType{
+		EVAL_NONE,
+		EVAL_SUMWEIGHT,
+		EVAL_MILP,
+		EVAL_MINLP
+	};
+
+	enum AccelerationType{
+		ACCEL_RSG = 1,
+		ACCEL_NEUTRAL_EXTENSION = 2
+	};
+
 	AlgorithmBase(const PnsProblem &problem);
 	virtual void run() = 0;
 	void saveSteps(bool save);

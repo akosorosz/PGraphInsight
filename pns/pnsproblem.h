@@ -85,6 +85,7 @@ std::string getUnitNamesString(const OperatingUnitSet &units);
 class PnsProblem
 {
 public:
+	virtual ~PnsProblem() = default;
 	virtual bool isEmpty() const =0;
 	virtual const MaterialSet &materials() const =0;
 	virtual const MaterialSet &rawMaterials() const =0;
@@ -99,6 +100,12 @@ public:
 	virtual OperatingUnitSet unitsConsumingAnyOf(const MaterialSet &materials) const =0;
 	virtual MaterialSet materialsProducedByAnyOf(const OperatingUnitSet &units) const =0;
 	virtual MaterialSet materialsConsumedByAnyOf(const OperatingUnitSet &units) const =0;
+
+	MaterialSet toBeProducedInDecisionMapping(const DecisionMapping &decisionMap) const;
+	MaterialSet alreadyProducedInDecisionMapping(const DecisionMapping &decisionMap) const;
+	OperatingUnitSet includedUnitsInDecisionMapping(const DecisionMapping &decisionMap) const;
+	OperatingUnitSet excludedUnitsInDecisionMapping(const DecisionMapping &decisionMap) const;
+	DecisionMapping neutralExtension(const DecisionMapping &decisionMap) const;
 };
 
 } // namespace PnsTools

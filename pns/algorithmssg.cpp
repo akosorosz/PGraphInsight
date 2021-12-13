@@ -4,19 +4,13 @@
 
 namespace PnsTools {
 
-void AlgorithmSSG::ssgRecursive(const ReducedPnsProblemView &problem, const MaterialSet &toBeProduced, const MaterialSet &alreadyProduced, const DecisionMapping &decisionMap, const OperatingUnitSet &includedUnits, const OperatingUnitSet &excludedUnits, int parentStepId)
+void AlgorithmSSG::ssgRecursive(const ReducedPnsProblemView &problem, const MaterialSet &pToBeProduced, const MaterialSet &pAlreadyProduced, const DecisionMapping &pDecisionMap, int parentStepId)
 {
-	if (toBeProduced.empty())
-	{
-		int solId=mSolutionStructures.size()+1;
-		mSolutionStructures.push_back({includedUnits,
-									   problem.materialsConsumedByAnyOf(includedUnits) + problem.materialsProducedByAnyOf(includedUnits)});
-		mSteps.push_back(StepOfAlgorithm(++mStepId, parentStepId, includedUnits, excludedUnits, 0.0, "Materials to be produced: " + getMaterialNamesString(toBeProduced) + "\nMaterials already decided: " + getMaterialNamesString(alreadyProduced) + "\nIncluded units: " + getUnitNamesString(includedUnits) + "\nExcluded units: " + getUnitNamesString(excludedUnits) + "\nSolution structure #" + std::to_string(solId) + " found\nUnits: " + getUnitNamesString(includedUnits)));
-		return;
-	}
-
-	Material selectedMaterial=toBeProduced.front();
-
+	MaterialSet toBeProduced=pToBeProduced;
+	MaterialSet alreadyProduced=pAlreadyProduced;
+	DecisionMapping decisionMap=pDecisionMap;
+	OperatingUnitSet includedUnits=problem.includedUnitsInDecisionMapping(decisionMap);
+	OperatingUnitSet excludedUnits=problem.excludedUnitsInDecisionMapping(decisionMap);
 	std::string decisionMapString("\nCurrent decision mapping:");
 	if (!decisionMap.empty())
 	{
@@ -27,8 +21,41 @@ void AlgorithmSSG::ssgRecursive(const ReducedPnsProblemView &problem, const Mate
 	{
 		decisionMapString += " empty";
 	}
+	std::string subproblemCommentString("Materials to be produced: " + getMaterialNamesString(toBeProduced) + "\nMaterials already decided: " + getMaterialNamesString(alreadyProduced) + "\nIncluded units: " + getUnitNamesString(includedUnits) + "\nExcluded units: " + getUnitNamesString(excludedUnits) + decisionMapString);
 
-	mSteps.push_back(StepOfAlgorithm(++mStepId, parentStepId, includedUnits, excludedUnits, 0.0, "Materials to be produced: " + getMaterialNamesString(toBeProduced) + "\nMaterials already decided: " + getMaterialNamesString(alreadyProduced) + "\nIncluded units: " + getUnitNamesString(includedUnits) + "\nExcluded units: " + getUnitNamesString(excludedUnits) + decisionMapString + "\nSelected material for decision: " + selectedMaterial->name));
+	if (mUseNeutralExtension)
+	{
+		decisionMap=problem.neutralExtension(pDecisionMap);
+		if (decisionMap.size()==pDecisionMap.size())
+		{
+			subproblemCommentString.append("\nNeutral extension: No effect");
+		}
+		else
+		{
+			toBeProduced=problem.toBeProducedInDecisionMapping(decisionMap);
+			alreadyProduced=problem.alreadyProducedInDecisionMapping(decisionMap);
+			includedUnits=problem.includedUnitsInDecisionMapping(decisionMap);
+			excludedUnits=problem.excludedUnitsInDecisionMapping(decisionMap);
+			std::string newDecisionMapString("\n    Decision mapping:");
+			for (const auto &dec : decisionMap)
+				newDecisionMapString += "\n      "+dec.first->name+": "+getUnitNamesString(dec.second);
+
+			subproblemCommentString.append("\nNeutral extension: extended with " + std::to_string(decisionMap.size()-pDecisionMap.size()) + " decisions. New data:" + "\n    Materials to be produced: " + getMaterialNamesString(toBeProduced) + "\n    Materials already decided: " + getMaterialNamesString(alreadyProduced) + "\n    Included units: " + getUnitNamesString(includedUnits) + "\n    Excluded units: " + getUnitNamesString(excludedUnits) + newDecisionMapString);
+		}
+	}
+
+	if (toBeProduced.empty())
+	{
+		int solId=mSolutionStructures.size()+1;
+		mSolutionStructures.push_back({includedUnits,
+									   problem.materialsConsumedByAnyOf(includedUnits) + problem.materialsProducedByAnyOf(includedUnits)});
+		mSteps.push_back(StepOfAlgorithm(++mStepId, parentStepId, includedUnits, excludedUnits, 0.0, subproblemCommentString + "\nSolution structure #" + std::to_string(solId) + " found\nUnits: " + getUnitNamesString(includedUnits)));
+		return;
+	}
+
+	Material selectedMaterial=toBeProduced.front();
+
+	mSteps.push_back(StepOfAlgorithm(++mStepId, parentStepId, includedUnits, excludedUnits, 0.0, subproblemCommentString + "\nSelected material for decision: " + selectedMaterial->name));
 	int mystepId=mStepId;
 
 	OperatingUnitSet canProduceSelectedMaterial = problem.unitsProducing(selectedMaterial);
@@ -50,15 +77,14 @@ void AlgorithmSSG::ssgRecursive(const ReducedPnsProblemView &problem, const Mate
 						 (toBeProduced + problem.materialsConsumedByAnyOf(decision))-(problem.rawMaterials() + alreadyProduced + selectedMaterial),
 						 alreadyProduced + selectedMaterial,
 						 newDecisionMap,
-						 includedUnits + decision,
-						 excludedUnits + decisionInverse,
 						 mystepId);
 		}
 	}
 }
 
-AlgorithmSSG::AlgorithmSSG(const PnsProblem &problem):
-	AlgorithmBase(problem)
+AlgorithmSSG::AlgorithmSSG(const PnsProblem &problem, unsigned int accelerations):
+	AlgorithmBase(problem),
+	mUseNeutralExtension(accelerations&ACCEL_NEUTRAL_EXTENSION)
 {
 }
 
@@ -88,7 +114,7 @@ void AlgorithmSSG::run()
 		return;
 	}
 
-	ssgRecursive(problem, problem.products(), MaterialSet(), {}, OperatingUnitSet(), OperatingUnitSet(), parentStepId);
+	ssgRecursive(problem, problem.products(), MaterialSet(), {}, parentStepId);
 }
 
 const std::list<std::pair<OperatingUnitSet, MaterialSet> > &AlgorithmSSG::getSolutionStructures() const
