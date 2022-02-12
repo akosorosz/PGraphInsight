@@ -9,7 +9,6 @@ namespace PnsTools {
 
 class AlgorithmABB : public AlgorithmBase
 {
-public:
 	struct ABBSolution{
 		OperatingUnitSet units;
 		MaterialSet materials;

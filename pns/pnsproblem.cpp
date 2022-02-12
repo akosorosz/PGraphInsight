@@ -72,11 +72,17 @@ DecisionMapping PnsProblem::neutralExtension(const DecisionMapping &decisionMap,
 	OperatingUnitSet excludedUnits=excludedUnitsInDecisionMapping(extended);
 	while (newRound)
 	{
+		// Find a material for which there is exactly 1 possible decision, i.e. either:
+		// - All of the units producing it are already included or excluded
+		//   - Note that in the special case, where all units are excluded, there is no consistent decision, so no decision is made
+		// - All of the units producing it are already excluded, except 1, which is still free
+		// - The number of units producing it and already included has reached the maximum parallel production limit
+		//   - Note that only the equality is accepted, if it surpassed the number, then there is no appropriate decision
 		auto materialIt=std::find_if(toBeProduced.begin(), toBeProduced.end(), [&includedUnits,&excludedUnits,&maxParallelProduction,this](Material m){
 			OperatingUnitSet producingM=this->unitsProducing(m);
-			OperatingUnitSet canBeAdded=producingM-excludedUnits;
+			OperatingUnitSet producingNotDecided=producingM-excludedUnits-includedUnits;
 			OperatingUnitSet alreadyAdded=producingM&includedUnits;
-			return canBeAdded.size()==0 || (alreadyAdded.size()==0 && canBeAdded.size()==1) || alreadyAdded.size()==maxParallelProduction;
+			return (alreadyAdded.size()>0 && producingNotDecided.size()==0) || (alreadyAdded.size()==0 && producingNotDecided.size()==1) || alreadyAdded.size()==maxParallelProduction;
 		});
 		if (materialIt==toBeProduced.end()) newRound=false;
 		else
